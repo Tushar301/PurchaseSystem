@@ -1,0 +1,12 @@
+﻿<ul class="nav navbar-nav">
+    <li>@Html.ActionLink("Home", "DisplayModule", "UserHome")</li>
+    
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Cloth Master Data <span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+            <li>@Html.ActionLink("Product Master", "ProductList", "Product")</li>
+            <li>@Html.ActionLink("Create / Select Customer", "CustomerList", "Customer")</li>
+        </ul>
+    </li>
+</ul>
+

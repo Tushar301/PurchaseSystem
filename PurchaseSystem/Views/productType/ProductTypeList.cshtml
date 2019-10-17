@@ -1,0 +1,30 @@
+﻿@model IEnumerable<PurchaseSystem.Common.ProductTypeMst>
+@{
+    ViewBag.Title = "ProductTypeList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<table class= "table ">
+    <thead>
+        <tr>
+            <th>
+                Product Type Description
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Description
+                </td>
+                <td>
+                    @Html.ActionLink("Edit","Edit","productType", new { id = item.pk_prodtypeid}, new {@class= "btn btn-primary" })
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -1,0 +1,111 @@
+﻿@model PurchaseSystem.DTO.Com_Bill_DTO
+
+@{
+    ViewBag.Title = "SaveUpdateBill";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section scripts{
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/start/jquery-ui.css">
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#txtItemSearch').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '../../ComBill/GetProductList',
+                        type: 'Get',
+                        dataType: 'JSON',
+                        data: { productName: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item.ProductName, value: item.productId }
+                            }));
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    event.preventDefault();
+                    $("#txtItemSearch").val('');
+                    $('#Fk_ProductId').val(ui.item.value);
+                }
+            });
+            $('#prodQuantity').change(function () {
+                $.ajax({
+                    url: '../../ComBill/CalculatePrice',
+                    type: 'Get',
+                    dataType: 'JSON',
+                    data: { selectedProductId: $('#Fk_ProductId').val(), countOrWeight: $('#prodQuantity').val() },
+                    success: function (data) {
+                        $('#price').val(data);
+                    },
+                    error: function (err) {
+                        alert(JSON.stringify(err));
+                    }
+                });
+            });
+        });
+    </script>
+    }
+
+<h2>SaveUpdateBill</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Com_Bill_DTO</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="alert alert-dismissible alert-success" style="height:50px">
+            <div class="col-md-6">
+                <strong>
+                    Customer Name : @Html.DisplayFor(a => a.CustomerMst.Name)
+                </strong>
+            </div>
+            <div class="col-md-6">
+                <strong>
+                    Customer Mobile No : @Html.DisplayFor(a => a.CustomerMst.MobNo)
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Fk_ProductId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+               @Html.DropDownListFor(model => model.Fk_ProductId, new SelectList(Model.ProductList, "productId", "ProductName"), "--Select product--", new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Fk_ProductId, "", new { @class = "text-danger" })
+                <input type="text" id="txtItemSearch" placeholder="Search Product" class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.prodQuantity, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.prodQuantity, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.prodQuantity, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.price, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.price, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.price, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
